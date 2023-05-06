@@ -11,6 +11,10 @@
   --col09: hsl(190, 72%, 78%);
   --col10: hsl(190, 78%, 86%);
   --col11: hsl(190, 84%, 94%);
+  --col12: hsl(0, 70%, 40%);
+  --col13: hsl(120, 60%, 30%);
+  --col14: hsl(120, 78%, 86%);
+  --col15: hsl(120, 84%, 94%);
 }
 
 html {
@@ -36,9 +40,12 @@ button {
 body {
   width: 100vw;
   font-family: "El Messiri";
-  background-color: var(--col10);
+  background-color: var(--col03);
   color: var(--col02);
-  /* height: 140vh; */
+}
+
+body.table {
+  background-color: var(--col10);
 }
 
 header > div,
@@ -49,11 +56,16 @@ main {
   margin: 0 auto;
 }
 
+main.card {
+  max-width: calc(100vw - 10rem);
+}
+
 header {
   width: 100%;
   height: 8rem;
   position: sticky;
   top: 0;
+  z-index: 2;
   padding: 1rem;
   background-color: var(--col03);
   color: var(--col10);
@@ -66,6 +78,7 @@ nav {
   height: 3rem;
   position: sticky;
   top: 8rem;
+  z-index: 2;
   padding: 0.5rem;
   background-color: var(--col02);
   color: var(--col10);
@@ -73,33 +86,30 @@ nav {
   box-shadow: inset 0 -3px 2px var(--col01);
 }
 
-nav > div {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+button.remove {
+  border: none;
+  cursor: pointer;
+  margin-top: 0.3rem;
 }
 
-.library-style {
-  display: grid;
-  grid-template-columns: repeat(3, max-content);
-  justify-content: center;
-  justify-items: center;
+button.remove svg {
+  width: 24px;
+  height: 24px;
+  color: var(--col05);
 }
 
-#library-style {
+button.remove svg:hover {
+  color: var(--col03);
+}
+
+.switch {
   position: relative;
   appearance: none;
   width: 34px;
   height: 20px;
-  background-color: var(--col04);
-  border: 2px inset var(--col03);
   border-radius: 12px;
-  margin: 0 0.3rem 0;
-}
-
-#library-style:focus {
-  background-color: var(--col06);
-  outline: 2px groove var(--col04);
-  outline-offset: 0;
+  margin: 0 0.4rem 0;
+  transition: all 200ms ease-in-out;
 }
 
 .switch::after {
@@ -109,32 +119,20 @@ nav > div {
   left: 0;
   width: 16px;
   height: 16px;
-  border: 1px outset var(--col01);
   border-radius: 50%;
-  background-color: var(--col02);
   cursor: pointer;
-  transition: all 300ms ease-in-out;
+  transition: all 200ms ease-in-out;
 }
 
-.card-style {
-  transition: all 300ms ease-in-out;
-  color: var(--col10);
+.switch:focus {
+  outline-offset: 0;
 }
 
-.table-style {
-  transition: all 300ms ease-in-out;
-  color:var(--col10);
+.switch:focus::after {
+  transition: all 200ms ease-in-out;
 }
 
-.card-style.checked {
-  color:var(--col04);
-}
-
-.table-style.checked {
-  color:var(--col04);
-}
-
-.switch.checked::after {
+.switch:checked:after {
   transform: translateX(14px)
 }
 
@@ -158,14 +156,205 @@ h1 {
   text-shadow: 2px 3px 2px var(--col01);
 }
 
-.table table {
+nav > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr))
+}
+
+.display-style {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  justify-content: center;
+  justify-items: center;
+}
+
+#display-style {
+  background-color: var(--col04);
+  border: 2px inset var(--col03);
+}
+
+#display-style::after {
+  border: 1px outset var(--col01);
+  background-color: var(--col02);
+}
+
+#display-style:focus {
+  background-color: var(--col06);
+  outline: 2px groove var(--col04);
+}
+
+.card-style,
+.table-style {
+  transition: all 200ms ease-in-out;
+  color: var(--col04);
+}
+
+.card-style.checked,
+.table-style.checked {
+  color:var(--col10);
+}
+
+main .switch {
+  grid-column: 2 / 3;
+  margin-top: 1.0rem;
+  background-color: var(--col12);
+  border: 2px inset var(--col03);
+}
+
+main .switch:after {
+  background-color: var(--col04);
+  border: 1px outset var(--col05);
+}
+main .switch:checked {
+  background-color: var(--col13);
+}
+
+main .switch:focus {
+  outline: 2px groove var(--col05);
+  outline-offset: 2px;
+}
+
+main.card {
+  background-color: var(--col03);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+main.card div {
+  margin: 4.0rem 2.0rem 1.0rem;
+  background: radial-gradient(circle farthest-corner at 18% 17%, var(--col10), var(--col08), var(--col10));
+  color: var(--col01);
+  border-radius: 16px;
+  box-shadow: 4px 6px 8px var(--col01), inset -3px -3px 12px var(--col02);
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+main.card h2 {
+  grid-column: 1 / 3;
+  font-size: 1.1rem;
+  font-variant: small-caps;
+}
+
+main.card h2:not([class="title"], [class="author"]) {
+  grid-column: 1 / 2;
+}
+
+main.card p {
+  grid-column: 1 / 3;
+  font-size: 1.3rem;
+  margin-left: 1.5rem;
+}
+
+main.card p:not([class="title"], [class="author"]) {
+  grid-column: 2 / 3;
+  font-size: 1.0rem;
+  margin: 0 2.5rem 0 auto;
+}
+
+main.card hr {
+  grid-column: 1 / 3;
+  width: 85%;
+  height: 1px;
+  margin: 0.5rem auto;
+  border-color: var(--col06);
+}
+
+main.card button.remove {
+  grid-column: 2 / 3;
+  justify-self: end;
+}
+
+main.card .form {
+  min-width: min-content;
+  background: radial-gradient(circle farthest-corner at 18% 17%, var(--col15), var(--col14), var(--col15));
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+}
+
+main.card form {
+  position: relative;
+  border: 2px groove var(--col06);
+  padding: 0.5rem;
+  display: grid;
+  column-gap: 0.2rem;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+main.card form::after {
+  position: absolute;
+  top: 2px;
+  right: -41px;
+  content: "New";
+  transform: rotate(48deg);
+  background-color: var(--col12);
+  color: var(--col11);
+  font-weight: bold;
+  line-height: 1.0rem;
+  padding: 0.1rem 2.0rem 0;
+  border-top-left-radius: 100% 50px;
+  border-top-right-radius: 100% 50px;
+  box-shadow: 2px -2px 6px var(--col01),
+              -3px 2px 25px var(--col01);
+}
+
+main.card form label {
+  grid-column: 1 / 2;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+
+main.card form input:not([id='book-read']) {
+  grid-column: 1 / 5;
+  width: 75%;
+  margin: 0 auto 0.2rem;
+  padding: 0 0.3rem;
+  font-size: 1.1rem;
+  border: none;
+  border-bottom: 2px groove var(--col06);
+}
+
+main.card form input:not([id='book-read']):focus {
+  background-color: var(--col15);
+  outline: 2px ridge var(--col06);
+  outline-offset: 3px;
+}
+
+main.card form label:last-of-type {
+  margin-top: 1.0rem;
+}
+
+main.card form button[type="clear"],
+main.card form button[type="submit"] {
+  grid-row: 12;
+  background-color: var(--col04);
+  color: var(--col11);
+  border: 2px outset var(--col06);
+  border-radius: 12px;
+  width: 4.0rem;
+  margin-top: 0.5rem;
+  justify-self: end;
+}
+
+main.card form button[type="clear"] {
+  grid-column: 3 / 4;
+}
+
+main.card form button[type="submit"] {
+  grid-column: 4 / 5;
+}
+
+main.table table {
   width: 100%;
   border-spacing: 0;
 }
 
-.table thead {
+main.table thead {
   position: sticky;
   top: 11rem;
+  z-index: 2;
   background-color: var(--col05);
   color: var(--col11);
   box-shadow: inset 1px -3px 2px var(--col04);
@@ -176,90 +365,45 @@ h1 {
   font-variant: small-caps;
 }
 
-.table th:first-of-type {
+main.table th:first-of-type {
   border-bottom-left-radius: 16px 100%;
 }
 
-.table th:last-of-type {
+main.table th:last-of-type {
   border-bottom-right-radius: 16px 100%;
 }
 
-.table th {
+main.table th {
   padding-left: 1rem;
 }
 
-.table tbody button {
-  border: none;
-  cursor: pointer;
-  margin-top: 0.3rem;
-}
-
-.table tbody button svg {
-  width: 24px;
-  height: 24px;
-}
-
-.table tbody button svg:hover {
-  color: var(--col05);
-}
-
-.table tr,
-.table td {
+main.table tr,
+main.table td {
   border-bottom: 2px groove var(--col11);
 }
 
-.table tr:hover {
+main.table tr:hover {
   background-color: var(--col09);
 }
 
-.table tr td:first-child {
+main.table tr td:first-child {
   max-width: 300px;
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.table td {
+main.table td {
   font-size: 1.2rem;
   padding: 0.2rem 1rem;
 }
 
-.table td:nth-last-of-type(4),
+main.table td:nth-last-of-type(4),
 .table td:nth-last-of-type(3) {
   text-align: right;
 }
 
-.table td:nth-last-of-type(2),
-.table td:last-of-type {
+main.table td:nth-last-of-type(2),
+main.table td:last-of-type {
   text-align: center;
-}
-
-.card {
-  background-color: var(--col03);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
-
-.card div {
-  margin: 4.0rem 2.0rem 1.0rem;
-  background-color: var(--col09);
-  color: var(--col01);
-  border-radius: 16px;
-  box-shadow: 4px 6px 8px var(--col01), inset -3px -3px 12px var(--col02);
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(6, min-content);
-}
-
-.card h2 {
-  grid-column: 1 / 3;
-  font-size: 1.1rem;
-  font-variant: small-caps;
-}
-
-.card p {
-  grid-column: 1 / 3;
-  font-size: 1.3rem;
-  margin-left: 1.5rem;
 }
