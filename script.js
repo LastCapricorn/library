@@ -213,7 +213,7 @@ function attachForm() {
   readInput.addEventListener('change' , () => readInput.setAttribute('value', readInput.checked))
   const cancelButton = document.createElement('button')
   const addButton = document.createElement('button')
-  cancelButton.setAttribute('type', 'clear')
+  cancelButton.setAttribute('type', 'reset')
   cancelButton.textContent = 'cancel'
   addButton.setAttribute('type', 'submit')
   addButton.textContent = 'add'
@@ -234,6 +234,7 @@ function attachForm() {
   formForm.appendChild(addButton)
   formCard.appendChild(formForm)
   container.insertAdjacentElement('afterbegin', formCard)
+  document.querySelector('button[type="reset"]').addEventListener('click' , resetForm)
   document.querySelector('button[type="submit"]').addEventListener('click', appendNewBook)
 }
 
@@ -440,6 +441,7 @@ function toggleLibraryDisplayMode() {
     attachForm()
   } else {
     document.querySelector('button[type="submit"]').removeEventListener('click', appendNewBook)
+    document.querySelector('button[type="reset"]').removeEventListener('click', resetForm)
     document
       .querySelectorAll('main div')
       .forEach((div) => document.querySelector('main').removeChild(div))
@@ -460,6 +462,14 @@ function appendNewBook(ev) {
   currentLibrary.addToLibrary(newBook)
   provideCard(newBook)
   attachForm()
+}
+
+function resetForm(ev) {
+  ev.preventDefault()
+  document.querySelector('button[type="reset"]').removeEventListener('click', resetForm)
+  ev.target.click()
+  document.querySelector('#book-year').value = new Date().getFullYear()
+  document.querySelector('button[type="reset"]').addEventListener('click', resetForm)
 }
 
 initializeLibrary()

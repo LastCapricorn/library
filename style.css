@@ -326,7 +326,7 @@ main.card form label:last-of-type {
   margin-top: 1.0rem;
 }
 
-main.card form button[type="clear"],
+main.card form button[type="reset"],
 main.card form button[type="submit"] {
   grid-row: 12;
   background-color: var(--col04);
@@ -338,7 +338,7 @@ main.card form button[type="submit"] {
   justify-self: end;
 }
 
-main.card form button[type="clear"] {
+main.card form button[type="reset"] {
   grid-column: 3 / 4;
 }
 
