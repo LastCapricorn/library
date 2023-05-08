@@ -158,7 +158,81 @@ h1 {
 
 nav > div {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr))
+  column-gap: 0.5rem;
+  grid-template-columns: max-content repeat(4, minmax(max-content, 200px));
+  align-items: center;
+}
+
+nav button:not(.new-library button) {
+  padding: 0.2rem 0.5rem;
+}
+
+#new-library {
+  position: relative;
+}
+
+.new-library.window {
+  position: absolute;
+  top: 1.95rem;
+  padding: 0.5rem;
+  background-color: var(--col02);
+  color: var(--col11);
+  border: 1px solid var(--col01);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 3px 4px 6px var(--col01);
+  display: none;
+}
+
+.new-library.window form {
+  border: 2px groove var(--col01);
+  padding: 0.5rem;
+  display: grid;
+  column-gap: 1.0rem;
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: min-content 1fr 1fr 1fr;
+}
+
+.new-library.window label {
+  grid-row: 2 / 4;
+  font-size: 0.9rem;
+}
+
+.new-library.window input {
+  grid-row: 4 / 5;
+  border: none;
+  border-bottom: 2px groove var(--col06);
+  font-size: 1.0rem;
+  padding-left: 0.5rem;
+}
+
+.new-library.window button.close {
+  grid-column: 2 / 3;
+  font-size: 0.8rem;
+  line-height: 1.2rem;
+  padding: 0.2rem 0.1rem 0;
+  border: 2px groove var(--col01);
+  border-radius: 6px;
+  background-color: var(--col02);
+}
+
+.new-library.window button.create {
+  grid-row: 4 / 5;
+  font-size: 1.1rem;
+  line-height: 1.0rem;
+  padding: 0.3rem 0.1rem 0;
+  border: 2px groove var(--col01);
+  border-radius: 6px;
+  background-color: var(--col02);
+  color: #00ff00
+}
+
+.new-library.window.show {
+  display: inherit;
+}
+
+.new-library.window input:focus {
+  outline: 2px groove var(--col06);
+  outline-offset: 2px;
 }
 
 .display-style {
@@ -268,6 +342,7 @@ main.card button.remove {
 
 main.card .form {
   min-width: min-content;
+  max-width: 400px;
   background: radial-gradient(circle farthest-corner at 18% 17%, var(--col15), var(--col14), var(--col15));
   display: grid;
   grid-template-columns: auto;

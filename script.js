@@ -104,15 +104,18 @@ class Library {
   }
 
   addToLibrary = (book) => {
-    if (
-      this.data.every(
-        (b) => (b.title && b.author) !== (book.title && book.author)
-      )
-    ) {
+    try {
+      const noDouble = this.data.every( (b) => (b.title && b.author) !== (book.title && book.author))
+      if (!noDouble) {
+        throw new Error(`"${book.title}" by ${book.author} already exists in this library!`)
+      }
       this.data.unshift(book)
       this.exportLibrary()
-    } else {
-      return `"${book.title}" by ${book.author} already exists in this library!`
+      provideCard(book)
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      attachForm()
     }
   }
 
@@ -208,9 +211,8 @@ function attachForm() {
   readInput.setAttribute('type', 'checkbox')
   readInput.setAttribute('id', 'book-read')
   readInput.setAttribute('name', 'book-read')
-  readInput.setAttribute('value', false)
   readInput.classList.add('switch')
-  readInput.addEventListener('change' , () => readInput.setAttribute('value', readInput.checked))
+
   const cancelButton = document.createElement('button')
   const addButton = document.createElement('button')
   cancelButton.setAttribute('type', 'reset')
@@ -294,14 +296,14 @@ function attachSwitch(value, iD) {
 }
 
 function showLibraryAsCardSet(lib) {
-  container.classList.remove('table')
-  document.querySelector('body').classList.remove('table')
+  clearContainer()
   container.classList.add('card')
-  if (lib.data !== []) {
+  if (!(lib.data === null)) {
     for (let book = 0; book < lib.data.length; book++) {
       provideCard(lib.data[book])
     }
   }
+  attachForm()
 }
 
 function provideCard(book) {
@@ -352,11 +354,11 @@ function provideCard(book) {
 }
 
 function showLibraryAsTable(lib) {
+  clearContainer()
   const libraryTable = document.createElement('table')
   const tableHead = document.createElement('thead')
   const tableBody = document.createElement('tbody')
 
-  container.classList.remove('card')
   document.querySelector('body').classList.add('table')
   container.classList.add('table')
 
@@ -395,8 +397,8 @@ function provideTableRow(book) {
 }
 
 function initializeLibrary() {
-  const setSelection = document.querySelector('body nav div select')
-  const setOptions = document.createElement('option')
+  const setSelection = document.querySelector('#choose-library')
+  setSelection.querySelectorAll('option').forEach( (opt) => setSelection.removeChild(opt))
   if (setSelection.hasAttribute('disabled')) {
     setSelection.removeAttribute('disabled')
     newLibraryButton.removeAttribute('disabled')
@@ -404,64 +406,70 @@ function initializeLibrary() {
 
   if (localStorage && localStorage.length !== 0) {
     for (let i = 0; i < localStorage.length; i++) {
+      const setOptions = document.createElement('option')
       if (localStorage.key(i) !== 'current') {
         setOptions.textContent = localStorage.key(i)
+        setOptions.setAttribute('value', localStorage.key(i))
         if (localStorage.key(i) === localStorage.getItem('current')) {
           setOptions.setAttribute('selected', '')
+        } else {
+          setOptions.removeAttribute('selected')
         }
         setSelection.appendChild(setOptions)
       }
     }
     currentLibrary = new Library(localStorage.getItem('current'))
     currentLibrary.importLibrary()
-    showLibraryAsCardSet(currentLibrary)
   } else if (localStorage && localStorage.length === 0) {
+    const setOptions = document.createElement('option')
     currentLibrary = new Library('Example Library')
     setOptions.textContent = currentLibrary.name
+    setOptions.setAttribute('value', currentLibrary.name)
     setOptions.setAttribute('selected', '')
     setSelection.appendChild(setOptions)
     currentLibrary.data = defaultLibrary
     currentLibrary.exportLibrary()
-    showLibraryAsCardSet(currentLibrary)
   } else {
     newLibraryButton.setAttribute('disabled', '')
     setSelection.setAttribute('disabled', '')
     currentLibrary = new Library('Example Library')
     currentLibrary.data = defaultLibrary
-    showLibraryAsCardSet(currentLibrary)
   }
+  showLibraryAsCardSet(currentLibrary)
 }
 
 function toggleLibraryDisplayMode() {
   document.querySelector('.card-style').classList.toggle('checked')
   document.querySelector('.table-style').classList.toggle('checked')
-  if (document.querySelector('main').classList.contains('table')) {
-    document.querySelector('main').removeChild(document.querySelector('table'))
+  if (container.classList.contains('table')) {
     showLibraryAsCardSet(currentLibrary)
-    attachForm()
   } else {
     document.querySelector('button[type="submit"]').removeEventListener('click', appendNewBook)
     document.querySelector('button[type="reset"]').removeEventListener('click', resetForm)
-    document
-      .querySelectorAll('main div')
-      .forEach((div) => document.querySelector('main').removeChild(div))
     showLibraryAsTable(currentLibrary)
+  }
+}
+function clearContainer() {
+  if (container.classList.contains('card')) {
+    container.classList.remove('card')
+    document.querySelectorAll('main div')
+    .forEach( (div) => document.querySelector('main').removeChild(div))
+  } else if (container.classList.contains('table')) {
+    container.classList.remove('table')
+    container.removeChild(document.querySelector('table'))
+    document.querySelector('body').classList.remove('table')
   }
 }
 
 function appendNewBook(ev) {
   ev.preventDefault()
   document.querySelector('button[type="submit"]').removeEventListener('click', appendNewBook)
-  const titleBook = document.querySelector('input[id="book-title"]').value
-  const authorBook = document.querySelector('input[id="book-author"]').value
-  const categoryBook = document.querySelector('input[id="book-category"]').value
-  const yearBook = document.querySelector('input[id="book-year"]').value
-  const pagesBook = document.querySelector('input[id="book-pages"]').value
-  const readBook = document.querySelector('input[id="book-read"]').value
-  const newBook = new Book(titleBook,authorBook,categoryBook,yearBook,pagesBook,readBook)
+  const bookData = []
+  document.querySelectorAll('.form input').forEach( (i) => {
+    bookData.push(i.id !== 'book-read' ? i.value : i.checked)
+  })
+  const newBook = new Book(...bookData)
   currentLibrary.addToLibrary(newBook)
-  provideCard(newBook)
-  attachForm()
 }
 
 function resetForm(ev) {
@@ -472,7 +480,30 @@ function resetForm(ev) {
   document.querySelector('button[type="reset"]').addEventListener('click', resetForm)
 }
 
+function createNewLibrary() {
+  document.querySelector('.new-library.window').classList.toggle('show')
+  if (document.querySelector('.new-library.window').classList.contains('show')) {
+    document.querySelector('.new-library.window input').focus()
+    document.querySelector('button.create').addEventListener('click', () => {
+      const newLibraryName = document.querySelector('#receive-name').value
+      if (newLibraryName) {
+        currentLibrary = new Library(newLibraryName)
+        localStorage.setItem('current', newLibraryName)
+        currentLibrary.exportLibrary()
+        initializeLibrary()
+        attachForm()
+      }
+      document.querySelector('button.close').click()
+    })
+  } else {
+    document.querySelector('.new-library.window input').blur()
+    document.querySelector('.new-library.window input').value = ''
+  }
+}
+
 initializeLibrary()
 attachForm()
 
 document.querySelector('#display-style').addEventListener('change', toggleLibraryDisplayMode)
+document.querySelector('#new-library > button').addEventListener('click', createNewLibrary)
+document.querySelector('button.close').addEventListener('click', createNewLibrary)

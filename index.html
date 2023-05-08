@@ -18,9 +18,21 @@
   </header>
   <nav>
     <div>
-      <select>
+      <label for="choose-library">current library:</label>
+      <select id="choose-library" name="choose">
       </select>
-      <button type="button">New Library</button>
+      <div id="new-library">
+        <button type="button" class="new-library">New Library</button>
+        <div class="new-library window">
+          <form action="" method="get">
+            <label for="receive-name">Please enter a name for your new library:</label>
+            <button type="button" class="close">&#10060;</button>
+            <input type="text" id="receive-name" name="receive-name" autofocus>
+            <button type="button" class="create">&#10004;</button>
+          </form>
+        </div>
+      </div>
+      <button type="button" id="remove-library">Remove Library</button>
       <label class="display-style" for="display-style"><span class="card-style checked">Cards</span>
       <input type="checkbox" name="display-style" id="display-style" class="switch" />
       <span class="table-style">Table</span></label>
