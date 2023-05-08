@@ -18,9 +18,9 @@
   </header>
   <nav>
     <div>
-      <label for="choose-library">current library:</label>
+      <label for="choose-library">current library:
       <select id="choose-library" name="choose">
-      </select>
+      </select></label>
       <div id="new-library">
         <button type="button" class="new-library">New Library</button>
         <div class="new-library window">
@@ -32,7 +32,16 @@
           </form>
         </div>
       </div>
-      <button type="button" id="remove-library">Remove Library</button>
+      <div id="remove-library">
+        <button type="button" class="remove-library">Remove Library</button>
+        <div class="close-library window">
+          <div>
+            <p>Do you really want to delete the current library?</p>
+            <button type="button" class="confirm">confirm</button>
+            <button type="button" class="quit">quit</button>
+          </div>
+        </div>
+      </div>
       <label class="display-style" for="display-style"><span class="card-style checked">Cards</span>
       <input type="checkbox" name="display-style" id="display-style" class="switch" />
       <span class="table-style">Table</span></label>

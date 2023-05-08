@@ -435,7 +435,13 @@ function initializeLibrary() {
     currentLibrary = new Library('Example Library')
     currentLibrary.data = defaultLibrary
   }
-  showLibraryAsCardSet(currentLibrary)
+
+  if (container.classList.contains('table')) {
+    showLibraryAsTable(currentLibrary)
+  } else {
+    showLibraryAsCardSet(currentLibrary)
+    attachForm()
+  }
 }
 
 function toggleLibraryDisplayMode() {
@@ -449,6 +455,7 @@ function toggleLibraryDisplayMode() {
     showLibraryAsTable(currentLibrary)
   }
 }
+
 function clearContainer() {
   if (container.classList.contains('card')) {
     container.classList.remove('card')
@@ -484,16 +491,22 @@ function createNewLibrary() {
   document.querySelector('.new-library.window').classList.toggle('show')
   if (document.querySelector('.new-library.window').classList.contains('show')) {
     document.querySelector('.new-library.window input').focus()
-    document.querySelector('button.create').addEventListener('click', () => {
-      const newLibraryName = document.querySelector('#receive-name').value
+    document.querySelector('button.create').addEventListener('click', function create() {
+      document.querySelector('button.create').removeEventListener('click', create)
+        const newLibraryName = document.querySelector('#receive-name').value
       if (newLibraryName) {
-        currentLibrary = new Library(newLibraryName)
-        localStorage.setItem('current', newLibraryName)
-        currentLibrary.exportLibrary()
-        initializeLibrary()
-        attachForm()
+        try {
+          if (newLibraryName === 'current') throw new Error('This name is reserved!')
+          currentLibrary = new Library(newLibraryName)
+          localStorage.setItem('current', newLibraryName)
+          currentLibrary.exportLibrary()
+          initializeLibrary()
+        } catch(err) {
+          alert(err.message)
+        } finally {
+          document.querySelector('button.close').click()
+        }
       }
-      document.querySelector('button.close').click()
     })
   } else {
     document.querySelector('.new-library.window input').blur()
@@ -501,9 +514,43 @@ function createNewLibrary() {
   }
 }
 
+function changeLibrary(ev) {
+  localStorage.setItem('current', ev.target.value)
+  initializeLibrary()
+}
+
+function removeLibrary() {
+  document.querySelector('.close-library.window').classList.toggle('show')
+
+  if (document.querySelector('.close-library.window').classList.contains('show')) {
+
+    document.querySelector('button.confirm').addEventListener('click', function confirm() {
+      document.querySelector('button.confirm').removeEventListener('click', confirm)
+      localStorage.removeItem(currentLibrary.name)
+      if (localStorage.length > 1) {
+        const storageKeys = []
+        for ( let k = 0; k < localStorage.length; k++) {
+          storageKeys.push(localStorage.key(k))
+        }
+        console.log(storageKeys)
+        localStorage.setItem('current', localStorage.key(storageKeys.findIndex( (i) => i !== 'current')))
+        console.log(localStorage.getItem('current'))
+      } else {
+        localStorage.clear()
+      }
+      initializeLibrary()
+      document.querySelector('button.quit').click()
+    })
+    document.querySelector('button.quit').addEventListener('click', removeLibrary)
+  } else {
+    document.querySelector('button.quit').removeEventListener('click', removeLibrary)
+  }
+}
+
 initializeLibrary()
-attachForm()
 
 document.querySelector('#display-style').addEventListener('change', toggleLibraryDisplayMode)
 document.querySelector('#new-library > button').addEventListener('click', createNewLibrary)
 document.querySelector('button.close').addEventListener('click', createNewLibrary)
+document.querySelector('#choose-library').addEventListener('change', changeLibrary)
+document.querySelector('.remove-library').addEventListener('click', removeLibrary)
