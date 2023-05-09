@@ -57,12 +57,17 @@ main {
   margin: 0 auto;
 }
 
+body.table header,
+body.table nav,
+body.table main {
+  min-width: 810px;
+}
+
 main.card {
   max-width: calc(100vw - 10rem);
 }
 
 header {
-  width: 100%;
   height: 8rem;
   position: sticky;
   top: 0;
@@ -323,9 +328,12 @@ nav button {
 
 main .switch {
   grid-column: 2 / 3;
-  margin-top: 1.0rem;
   background-color: var(--col12);
   border: 2px inset var(--col03);
+}
+
+main.card .switch {
+  margin-top: 1.0rem;
 }
 
 main .switch:after {
@@ -395,7 +403,7 @@ main.card button.remove {
   justify-self: end;
 }
 
-main.card .form {
+main.card .form-container {
   min-width: min-content;
   max-width: 400px;
   background: radial-gradient(circle farthest-corner at 18% 17%, var(--col15), var(--col14), var(--col15));
@@ -548,10 +556,11 @@ main.table td:last-of-type {
   text-align: center;
 }
 
-main.table .form {
+main.table .form-container {
   position: sticky;
+  max-width: 1200px;
   top: 11.0rem;
-  width: 100%;
+  min-width: 810px;
   background-color: var(--col04);
   border-bottom: 2px groove var(--col06);
   z-index: 3;
@@ -564,7 +573,7 @@ main.table form {
   display: grid;
   column-gap: 0.3rem;
   row-gap: 0.1rem;
-  grid-template-columns: repeat(7, max-content);
+  grid-template-columns: repeat(7, minmax(1px, 1fr));
   grid-template-rows: 0.75fr 1fr;
   justify-content: space-between;
   align-items: start;
@@ -591,12 +600,19 @@ main.table form input:not([id='book-read']):focus {
 }
 
 main.table #book-read {
-  position: absolute;
-  top: -12px;
-  left:-5px;
+  position: relative;
   grid-row: 2;
   grid-column: 6;
+  justify-self: center;
+  align-self: center;
 }
+
+main.table #book-read::after {
+  position: absolute;
+  top: 0;
+  left:0;
+}
+
 
 main.table form button[type="reset"],
 main.table form button[type="submit"] {
@@ -620,6 +636,7 @@ main.table form button[type="submit"] {
 
 #table-form-toggler {
   display: none;
+  user-select: none;
   font-size: 2.0rem;
   line-height: 1.4rem;
   padding-top: 0.3rem;

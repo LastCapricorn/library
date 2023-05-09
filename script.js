@@ -154,8 +154,6 @@ class Library {
       }
     } catch (err) {
       alert(err.message)
-    } finally {
-      attachForm()
     }
   }
 
@@ -187,99 +185,9 @@ class Book {
 const headings = ['Title', 'Author', 'Category', 'Year', 'Pages', 'Read', '']
 const container = document.querySelector('.container')
 const newLibraryButton = document.querySelector('body nav div button')
+const yearInput = document.querySelector('#book-year')
 let currentLibrary
-
-function attachForm() {
-  if (container.contains(document.querySelector('.form'))) {
-    container.removeChild(document.querySelector('.form'))
-  }
-  const formCard = document.createElement('div')
-  formCard.classList.add('form')
-  const formForm = document.createElement('form')
-  formForm.setAttribute('action', '')
-  formForm.setAttribute('method', 'get')
-  formForm.setAttribute('autocomplete', 'off')
-  const titleLabel = document.createElement('label')
-  const titleInput = document.createElement('input')
-  titleLabel.setAttribute('for', 'book-title')
-  titleLabel.textContent = 'Title'
-  titleInput.setAttribute('type', 'text')
-  titleInput.setAttribute('id', 'book-title')
-  titleInput.setAttribute('name', 'book-title')
-  titleInput.setAttribute('required', '')
-
-  const authorLabel = document.createElement('label')
-  const authorInput = document.createElement('input')
-  authorLabel.setAttribute('for', 'book-author')
-  authorLabel.textContent = 'Author'
-  authorInput.setAttribute('type', 'text')
-  authorInput.setAttribute('id', 'book-author')
-  authorInput.setAttribute('name', 'book-author')
-
-  const categoryLabel = document.createElement('label')
-  const categoryInput = document.createElement('input')
-  categoryLabel.setAttribute('for', 'book-category')
-  categoryLabel.textContent = 'Category'
-  categoryInput.setAttribute('type', 'text')
-  categoryInput.setAttribute('id', 'book-category')
-  categoryInput.setAttribute('name', 'book-category')
-
-  const yearLabel = document.createElement('label')
-  const yearInput = document.createElement('input')
-  yearLabel.setAttribute('for', 'book-year')
-  yearLabel.textContent = 'Year'
-  yearInput.setAttribute('type', 'number')
-  yearInput.setAttribute('id', 'book-year')
-  yearInput.setAttribute('name', 'book-year')
-  yearInput.setAttribute('min', '0')
-  yearInput.setAttribute('max', new Date().getFullYear())
-  yearInput.value = new Date().getFullYear()
-
-  const pagesLabel = document.createElement('label')
-  const pagesInput = document.createElement('input')
-  pagesLabel.setAttribute('for', 'book-pages')
-  pagesLabel.textContent = 'Pages'
-  pagesInput.setAttribute('type', 'number')
-  pagesInput.setAttribute('id', 'book-pages')
-  pagesInput.setAttribute('name', 'book-pages')
-  pagesInput.setAttribute('min', '0')
-  pagesInput.setAttribute('max', 30000)
-
-  const readLabel = document.createElement('label')
-  const readInput = document.createElement('input')
-  readLabel.setAttribute('for', 'book-read')
-  readLabel.textContent = 'Read'
-  readInput.setAttribute('type', 'checkbox')
-  readInput.setAttribute('id', 'book-read')
-  readInput.setAttribute('name', 'book-read')
-  readInput.classList.add('switch')
-
-  const cancelButton = document.createElement('button')
-  const addButton = document.createElement('button')
-  cancelButton.setAttribute('type', 'reset')
-  cancelButton.textContent = 'reset'
-  addButton.setAttribute('type', 'submit')
-  addButton.textContent = 'add'
-
-  formForm.appendChild(titleLabel)
-  formForm.appendChild(titleInput)
-  formForm.appendChild(authorLabel)
-  formForm.appendChild(authorInput)
-  formForm.appendChild(categoryLabel)
-  formForm.appendChild(categoryInput)
-  formForm.appendChild(yearLabel)
-  formForm.appendChild(yearInput)
-  formForm.appendChild(pagesLabel)
-  formForm.appendChild(pagesInput)
-  formForm.appendChild(readLabel)
-  formForm.appendChild(readInput)
-  formForm.appendChild(cancelButton)
-  formForm.appendChild(addButton)
-  formCard.appendChild(formForm)
-  container.insertAdjacentElement('afterbegin', formCard)
-  document.querySelector('button[type="reset"]').addEventListener('click' , resetForm)
-  document.querySelector('button[type="submit"]').addEventListener('click', appendNewBook)
-}
+let appendOne = false
 
 function attachRemoveButton(title) {
   const removeButton = document.createElement('button')
@@ -344,12 +252,12 @@ function showLibraryAsCardSet() {
       provideCard(currentLibrary.data[book])
     }
   }
-  attachForm()
 }
 
 function provideCard(book) {
   const form = document.querySelector('.form')
   const card = document.createElement('div')
+  card.setAttribute('class', 'card')
   card.setAttribute('data-title', book.title)
 
   for (const key in book) {
@@ -387,8 +295,9 @@ function provideCard(book) {
     container.removeChild(removeCard)
   })
   card.appendChild(removeButton)
-  if (form) {
+  if (appendOne) {
     form.insertAdjacentElement('afterend', card)
+    appendOne = false
   } else {
     container.appendChild(card)
   }
@@ -415,7 +324,6 @@ function showLibraryAsTable() {
     libraryTable.appendChild(tableBody)
   })
   container.appendChild(libraryTable)
-  attachForm()
 }
 
 function provideTableRow(book) {
@@ -445,8 +353,9 @@ function provideTableRow(book) {
   })
   buttonCell.appendChild(removeButton)
   tableRow.appendChild(buttonCell)
-  if (document.querySelector('main.table form')) {
+  if (appendOne) {
     document.querySelector('tbody').insertAdjacentElement('afterbegin', tableRow)
+    appendOne = false
   } else {
     return  tableRow
   }
@@ -497,7 +406,6 @@ function initializeLibrary() {
   } else {
     showLibraryAsCardSet()
   }
-  attachForm()
 }
 
 function toggleLibraryDisplayMode() {
@@ -506,8 +414,6 @@ function toggleLibraryDisplayMode() {
   if (container.classList.contains('table')) {
     showLibraryAsCardSet()
   } else {
-    document.querySelector('button[type="submit"]').removeEventListener('click', appendNewBook)
-    document.querySelector('button[type="reset"]').removeEventListener('click', resetForm)
     showLibraryAsTable()
   }
 }
@@ -515,13 +421,12 @@ function toggleLibraryDisplayMode() {
 function clearContainer() {
   if (container.classList.contains('card')) {
     container.classList.remove('card')
-    document.querySelectorAll('main div')
+    document.querySelectorAll('main div.card')
     .forEach( (div) => document.querySelector('main').removeChild(div))
   } else if (container.classList.contains('table')) {
-    container.classList.remove('table')
-    document.querySelector('body').classList.remove('table')
     container.removeChild(document.querySelector('table'))
-    // container.removeChild('div.form')
+    document.querySelector('body').classList.remove('table')
+    container.classList.remove('table')
   }
 }
 
@@ -533,6 +438,7 @@ function appendNewBook(ev) {
     bookData.push(i.id !== 'book-read' ? i.value : i.checked)
   })
   const newBook = new Book(...bookData)
+  appendOne = true
   currentLibrary.addToLibrary(newBook)
 }
 
@@ -602,13 +508,17 @@ function removeLibrary() {
   }
 }
 
+yearInput.setAttribute('max', new Date().getFullYear())
+yearInput.value = new Date().getFullYear()
 initializeLibrary()
 
-document.querySelector('#display-style').addEventListener('change', toggleLibraryDisplayMode)
+document.querySelector('#choose-library').addEventListener('change', changeLibrary)
 document.querySelector('#new-library > button').addEventListener('click', createNewLibrary)
 document.querySelector('button.close').addEventListener('click', createNewLibrary)
-document.querySelector('#choose-library').addEventListener('change', changeLibrary)
 document.querySelector('.remove-library').addEventListener('click', removeLibrary)
+document.querySelector('#display-style').addEventListener('change', toggleLibraryDisplayMode)
+document.querySelector('button[type="submit"]').addEventListener('click', appendNewBook)
+document.querySelector('button[type="reset"]').addEventListener('click' , resetForm)
 document.querySelector('#table-form-toggler').addEventListener('click', () => {
   document.querySelector('#table-form-toggler').classList.toggle('form-open')
   document.querySelector('main.table').classList.toggle('form-open')
