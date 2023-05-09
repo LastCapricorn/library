@@ -240,10 +240,13 @@ function attachSwitch(value, iD) {
   switchInput.checked = value
   switchInput.addEventListener('change', (ev) => {
     const bookIndex = currentLibrary.data.findIndex((entry) => entry.title === ev.target.id)
+    const readText = document.querySelector('main.card span')
     currentLibrary.data[bookIndex].read = switchInput.checked
+    readText.textContent = switchInput.checked ? 'Of course!' : 'Should I?'
     currentLibrary.exportLibrary()
   })
   switchLabel.setAttribute('for', iD)
+  switchLabel.setAttribute('class', 'switch-box')
   switchLabel.appendChild(switchInput)
   return switchLabel
 }
@@ -273,13 +276,14 @@ function provideCard(book) {
       cardHeading.textContent = cardHeading.textContent.replace(
         cardHeading.textContent[0],
         cardHeading.textContent[0].toUpperCase()
-      )
-      card.appendChild(cardHeading)
-      cardText.setAttribute('class', key)
-      if (key === 'read') {
-        card.appendChild(
-          attachSwitch(book.read, book.title)
         )
+        card.appendChild(cardHeading)
+        cardText.setAttribute('class', key)
+        if (key === 'read') {
+        const cardReadText = document.createElement('span')
+        card.appendChild(attachSwitch(book.read, book.title))
+        cardReadText.textContent = book[key] === true ? 'Of course!' : 'Should I?'
+        card.appendChild(cardReadText)
       } else {
         cardText.textContent = book[key]
         card.appendChild(cardText)

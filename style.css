@@ -115,7 +115,6 @@ button.remove svg:hover {
   height: 20px;
   border-radius: 12px;
   margin: 0 0.4rem 0;
-  transition: all 200ms ease-in-out;
 }
 
 .switch::after {
@@ -127,19 +126,15 @@ button.remove svg:hover {
   height: 16px;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 200ms ease-in-out;
+  transition: transform 200ms ease-in-out;
 }
 
 .switch:focus {
   outline-offset: 0;
 }
 
-.switch:focus::after {
-  transition: all 200ms ease-in-out;
-}
-
 .switch:checked::after {
-  transform: translateX(14px)
+  transform: translateX(14px);
 }
 
 header > div {
@@ -327,12 +322,11 @@ nav button {
 }
 
 main .switch {
-  grid-column: 2 / 3;
   background-color: var(--col12);
   border: 2px inset var(--col03);
 }
 
-main.card .switch {
+main.card #book-read {
   margin-top: 1.0rem;
 }
 
@@ -340,6 +334,7 @@ main .switch:after {
   background-color: var(--col04);
   border: 1px outset var(--col05);
 }
+
 main .switch:checked {
   background-color: var(--col13);
 }
@@ -363,11 +358,11 @@ main.card div {
   box-shadow: 4px 6px 8px var(--col01), inset -3px -3px 12px var(--col02);
   padding: 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 main.card h2 {
-  grid-column: 1 / 3;
+  grid-column: 1 / 5;
   font-size: 1.1rem;
   font-variant: small-caps;
 }
@@ -377,7 +372,7 @@ main.card h2:not([class="title"], [class="author"]) {
 }
 
 main.card p {
-  grid-column: 1 / 3;
+  grid-column: 1 / 5;
   font-size: 1.3rem;
   margin-left: 1.5rem;
   overflow-x: hidden;
@@ -385,21 +380,28 @@ main.card p {
 }
 
 main.card p:not([class="title"], [class="author"]) {
-  grid-column: 2 / 3;
+  grid-column: 3 / 5;
   font-size: 1.0rem;
   margin: 0 2.5rem 0 auto;
 }
 
 main.card hr {
-  grid-column: 1 / 3;
+  grid-column: 1 / 5;
   width: 85%;
   height: 1px;
   margin: 0.5rem auto;
   border-color: var(--col06);
 }
 
-main.card button.remove {
+main.card label.switch-box {
   grid-column: 2 / 3;
+}
+main.card span {
+  grid-column: 3 / 5;
+}
+
+main.card button.remove {
+  grid-column: 4 / 5;
   justify-self: end;
 }
 
