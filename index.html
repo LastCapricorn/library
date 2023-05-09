@@ -50,7 +50,7 @@
   </nav>
   <main class="container">
     <div class="form-container">
-      <form action="" method="get" autocomplete="off">
+      <form action="" method="get" id="add-book" autocomplete="off">
         <label for="book-title">Title</label>
         <input type="text" id="book-title" name="book-title" required />
         <label for="book-author">Author</label>
@@ -63,10 +63,15 @@
         <input type="number" id="book-pages" name="book-pages" min="0" max="20000" />
         <label for="book-read">Read</label>
         <input type="checkbox" id="book-read" name="book-read" class="switch" >
-        <button type="reset">reset</button>
-        <button type="submit">add</button>
+        <button type="reset" form="add-book">reset</button>
+        <button type="submit" form="add-book">add</button>
       </form>
     </div>
   </main>
+  <footer>
+    <div>
+      <p>&copy; 2023 by <a href="https://github.com/LastCapricorn">Last Capricorn</a></p>
+    </div>
+  </footer>
 </body>
 </html>
