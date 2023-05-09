@@ -84,6 +84,42 @@ const defaultLibrary = [
   },
 ]
 
+// function Library(name) {
+//     this.name = name
+//     this.data = []
+// }
+// Library.prototype.importLibrary = function() {
+//   this.data = JSON.parse(localStorage.getItem(this.name))
+// }
+// Library.prototype.exportLibrary = function() {
+//   try {
+//     localStorage.setItem('current', this.name)
+//     localStorage.setItem(this.name, JSON.stringify(this.data))
+//   } catch (err) {
+//     return "Sorry, apparently the localStorage isn't available to save the library!"
+//   }
+// }
+// Library.prototype.addToLibrary = function(book) {
+//   try {
+//     const noDouble = this.data.every( (b) => (b.title && b.author) !== (book.title && book.author))
+//     if (!noDouble) {
+//       throw new Error(`"${book.title}" by ${book.author} already exists in this library!`)
+//     }
+//     this.data.unshift(book)
+//     this.exportLibrary()
+//     provideCard(book)
+//   } catch (err) {
+//     alert(err.message)
+//   } finally {
+//     attachForm()
+//   }
+// }
+// Library.prototype.removeFromLibrary = function(bookTitle) {
+//   const bookIndex = this.data.findIndex((entry) => entry.title === bookTitle)
+//   this.data.splice(bookIndex, 1)
+//   this.exportLibrary()
+// }
+
 class Library {
   constructor(name) {
     this.name = name
@@ -99,7 +135,7 @@ class Library {
       localStorage.setItem('current', this.name)
       localStorage.setItem(this.name, JSON.stringify(this.data))
     } catch (err) {
-      return "Sorry, apparently the localStorage isn't available to save the library!"
+      alert("Sorry, apparently the localStorage isn't available to save the library!")
     }
   }
 
@@ -111,7 +147,11 @@ class Library {
       }
       this.data.unshift(book)
       this.exportLibrary()
-      provideCard(book)
+      if (container.classList.contains('card')) {
+        provideCard(book)
+      } else {
+        provideTableRow(book)
+      }
     } catch (err) {
       alert(err.message)
     } finally {
@@ -145,7 +185,7 @@ class Book {
 }
 
 const headings = ['Title', 'Author', 'Category', 'Year', 'Pages', 'Read', '']
-const container = document.querySelector('main')
+const container = document.querySelector('.container')
 const newLibraryButton = document.querySelector('body nav div button')
 let currentLibrary
 
@@ -158,6 +198,7 @@ function attachForm() {
   const formForm = document.createElement('form')
   formForm.setAttribute('action', '')
   formForm.setAttribute('method', 'get')
+  formForm.setAttribute('autocomplete', 'off')
   const titleLabel = document.createElement('label')
   const titleInput = document.createElement('input')
   titleLabel.setAttribute('for', 'book-title')
@@ -216,7 +257,7 @@ function attachForm() {
   const cancelButton = document.createElement('button')
   const addButton = document.createElement('button')
   cancelButton.setAttribute('type', 'reset')
-  cancelButton.textContent = 'cancel'
+  cancelButton.textContent = 'reset'
   addButton.setAttribute('type', 'submit')
   addButton.textContent = 'add'
 
@@ -295,12 +336,12 @@ function attachSwitch(value, iD) {
   return switchLabel
 }
 
-function showLibraryAsCardSet(lib) {
+function showLibraryAsCardSet() {
   clearContainer()
   container.classList.add('card')
-  if (!(lib.data === null)) {
-    for (let book = 0; book < lib.data.length; book++) {
-      provideCard(lib.data[book])
+  if (!(currentLibrary.data === null)) {
+    for (let book = 0; book < currentLibrary.data.length; book++) {
+      provideCard(currentLibrary.data[book])
     }
   }
   attachForm()
@@ -353,7 +394,7 @@ function provideCard(book) {
   }
 }
 
-function showLibraryAsTable(lib) {
+function showLibraryAsTable() {
   clearContainer()
   const libraryTable = document.createElement('table')
   const tableHead = document.createElement('thead')
@@ -369,15 +410,17 @@ function showLibraryAsTable(lib) {
   })
   libraryTable.appendChild(tableHead)
 
-  lib.data.forEach((book) => {
+  currentLibrary.data.forEach((book) => {
     tableBody.appendChild(provideTableRow(book))
     libraryTable.appendChild(tableBody)
   })
   container.appendChild(libraryTable)
+  attachForm()
 }
 
 function provideTableRow(book) {
   const tableRow = document.createElement('tr')
+  tableRow.setAttribute('data-title', book.title)
   const buttonCell = document.createElement('td')
   for (const key in book) {
     if (Object.hasOwnProperty.call(book, key)) {
@@ -391,9 +434,22 @@ function provideTableRow(book) {
       }
     }
   }
-  buttonCell.appendChild(attachRemoveButton(book.title))
+  const removeButton = attachRemoveButton(book.title)
+  removeButton.addEventListener('click', () => {
+    currentLibrary.removeFromLibrary(removeButton.value)
+    const tableBody = document.querySelector('tbody')
+    const removeRow = document.querySelector(
+      `tr[data-title = '${removeButton.value}']`
+    )
+    tableBody.removeChild(removeRow)
+  })
+  buttonCell.appendChild(removeButton)
   tableRow.appendChild(buttonCell)
-  return  tableRow
+  if (document.querySelector('main.table form')) {
+    document.querySelector('tbody').insertAdjacentElement('afterbegin', tableRow)
+  } else {
+    return  tableRow
+  }
 }
 
 function initializeLibrary() {
@@ -437,22 +493,22 @@ function initializeLibrary() {
   }
 
   if (container.classList.contains('table')) {
-    showLibraryAsTable(currentLibrary)
+    showLibraryAsTable()
   } else {
-    showLibraryAsCardSet(currentLibrary)
-    attachForm()
+    showLibraryAsCardSet()
   }
+  attachForm()
 }
 
 function toggleLibraryDisplayMode() {
   document.querySelector('.card-style').classList.toggle('checked')
   document.querySelector('.table-style').classList.toggle('checked')
   if (container.classList.contains('table')) {
-    showLibraryAsCardSet(currentLibrary)
+    showLibraryAsCardSet()
   } else {
     document.querySelector('button[type="submit"]').removeEventListener('click', appendNewBook)
     document.querySelector('button[type="reset"]').removeEventListener('click', resetForm)
-    showLibraryAsTable(currentLibrary)
+    showLibraryAsTable()
   }
 }
 
@@ -463,8 +519,9 @@ function clearContainer() {
     .forEach( (div) => document.querySelector('main').removeChild(div))
   } else if (container.classList.contains('table')) {
     container.classList.remove('table')
-    container.removeChild(document.querySelector('table'))
     document.querySelector('body').classList.remove('table')
+    container.removeChild(document.querySelector('table'))
+    // container.removeChild('div.form')
   }
 }
 
@@ -532,9 +589,7 @@ function removeLibrary() {
         for ( let k = 0; k < localStorage.length; k++) {
           storageKeys.push(localStorage.key(k))
         }
-        console.log(storageKeys)
         localStorage.setItem('current', localStorage.key(storageKeys.findIndex( (i) => i !== 'current')))
-        console.log(localStorage.getItem('current'))
       } else {
         localStorage.clear()
       }
@@ -554,3 +609,7 @@ document.querySelector('#new-library > button').addEventListener('click', create
 document.querySelector('button.close').addEventListener('click', createNewLibrary)
 document.querySelector('#choose-library').addEventListener('change', changeLibrary)
 document.querySelector('.remove-library').addEventListener('click', removeLibrary)
+document.querySelector('#table-form-toggler').addEventListener('click', () => {
+  document.querySelector('#table-form-toggler').classList.toggle('form-open')
+  document.querySelector('main.table').classList.toggle('form-open')
+})

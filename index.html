@@ -24,12 +24,12 @@
       <div id="new-library">
         <button type="button" class="new-library">New Library</button>
         <div class="new-library window">
-          <form action="" method="get">
+          <div>
             <label for="receive-name">Please enter a name for your new library:</label>
             <button type="button" class="close">&#10060;</button>
             <input type="text" id="receive-name" name="receive-name" autofocus>
             <button type="button" class="create">&#10004;</button>
-          </form>
+          </div>
         </div>
       </div>
       <div id="remove-library">
@@ -45,9 +45,11 @@
       <label class="display-style" for="display-style"><span class="card-style checked">Cards</span>
       <input type="checkbox" name="display-style" id="display-style" class="switch" />
       <span class="table-style">Table</span></label>
+      <span role="button" id="table-form-toggler">&#10010;</span>
     </div>
   </nav>
-  <main>
+  <main class="container">
+    
   </main>
 </body>
 </html>
