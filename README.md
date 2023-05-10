@@ -7,3 +7,27 @@ I read the assignment on TOP for this project and I don't know why, suddenly fel
 Finally solved the issues with those switch buttons - feeling more than ever terribly stupid...
 
 Woo-hoo - think I'm done now! This one gave a little taste of how much work there will be in a real real-life-project in future. It gets increasingly difficult to keep track - time is getting closer when I can't start off head over heals...
+
+So here is what my library page should do:
+
+- using local storage
+
+- add and remove a book to a library
+
+- add, remove and change libraries
+
+- removing the last library leads in loading the default library
+
+- display library in card and table mode
+
+- alert if a book title already exists in current library
+
+- alert if local storage isn't available
+
+- new books must have at least a title
+
+The font: "El Messiri" from google fonts
+
+The trash bin: Phosphor Icons, duotone (<https://phosphoricons.com>)
+
+The colors & capricorn logo: me
