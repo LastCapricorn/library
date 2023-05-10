@@ -436,15 +436,16 @@ function clearContainer() {
 }
 
 function appendNewBook(ev) {
-  ev.preventDefault()
-  const bookData = []
-  document.querySelectorAll('.form-container input').forEach( (i) => {
-    bookData.push(i.id !== 'book-read' ? i.value : i.checked)
-  })
-  const newBook = new Book(...bookData)
-  appendOne = true
-  currentLibrary.addToLibrary(newBook)
-  resetButton.click()
+  if (document.querySelector('#book-title').value !== '') {
+    const bookData = []
+    document.querySelectorAll('.form-container input').forEach( (i) => {
+      bookData.push(i.id !== 'book-read' ? i.value : i.checked)
+    })
+    const newBook = new Book(...bookData)
+    appendOne = true
+    currentLibrary.addToLibrary(newBook)
+    resetButton.click()
+  }
 }
 
 function resetForm(ev) {
@@ -488,29 +489,19 @@ function changeLibrary(ev) {
 }
 
 function removeLibrary() {
-  document.querySelector('.close-library.window').classList.toggle('show')
-
-  if (document.querySelector('.close-library.window').classList.contains('show')) {
-
-    document.querySelector('button.confirm').addEventListener('click', function confirm() {
-      document.querySelector('button.confirm').removeEventListener('click', confirm)
-      localStorage.removeItem(currentLibrary.name)
-      if (localStorage.length > 1) {
-        const storageKeys = []
-        for ( let k = 0; k < localStorage.length; k++) {
-          storageKeys.push(localStorage.key(k))
-        }
-        localStorage.setItem('current', localStorage.key(storageKeys.findIndex( (i) => i !== 'current')))
-      } else {
-        localStorage.clear()
+  localStorage.removeItem(currentLibrary.name)
+  if (localStorage.length > 1) {
+    for ( let k = 0; k < localStorage.length; k++) {
+      if (localStorage.key(k) !== 'current') {
+        localStorage.setItem('current', localStorage.key(k))
+        break
       }
-      initializeLibrary()
-      document.querySelector('button.quit').click()
-    })
-    document.querySelector('button.quit').addEventListener('click', removeLibrary)
+    }
   } else {
-    document.querySelector('button.quit').removeEventListener('click', removeLibrary)
+    localStorage.clear()
   }
+  initializeLibrary()
+  document.querySelector('.close-library').classList.remove('show')
 }
 
 yearInput.setAttribute('max', new Date().getFullYear())
@@ -520,7 +511,14 @@ initializeLibrary()
 document.querySelector('#choose-library').addEventListener('change', changeLibrary)
 document.querySelector('#new-library > button').addEventListener('click', createNewLibrary)
 document.querySelector('button.close').addEventListener('click', createNewLibrary)
-document.querySelector('.remove-library').addEventListener('click', removeLibrary)
+document.querySelector('.remove-library')
+  .addEventListener('click', () => document
+  .querySelector('.close-library').classList.toggle('show')
+)
+document.querySelector('button.quit').addEventListener('click', () => document
+.querySelector('.close-library').classList.remove('show')
+)
+document.querySelector('button.confirm').addEventListener('click', removeLibrary)
 document.querySelector('#display-style').addEventListener('change', toggleLibraryDisplayMode)
 submitButton.addEventListener('click', appendNewBook)
 resetButton.addEventListener('click' , resetForm)

@@ -181,8 +181,7 @@ nav button {
   position: relative;
 }
 
-.new-library.window,
-.close-library.window {
+.window {
   position: absolute;
   padding: 0.5rem;
   background-color: var(--col02);
@@ -193,16 +192,14 @@ nav button {
   display: none;
 }
 
-.new-library.window div,
-.close-library.window div {
+.window div {
   border: 2px groove var(--col01);
   padding: 0.5rem;
   display: grid;
   column-gap: 1.0rem;
 }
 
-.new-library.window.show,
-.close-library.window.show {
+.window.show {
   display: inherit;
 }
 
@@ -351,6 +348,7 @@ main.card {
 }
 
 main.card div {
+  max-width: 500px;
   margin: 4.0rem 2.0rem 1.0rem;
   background: radial-gradient(circle farthest-corner at 18% 17%, var(--col10), var(--col08), var(--col10));
   color: var(--col01);
